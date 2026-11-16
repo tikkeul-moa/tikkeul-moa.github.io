@@ -371,7 +371,7 @@ $('next').onclick=()=>moveBy(1);
     const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
     if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.5||Date.now()-st>800) return;
     const n=dx<0?1:-1;
-    moveBy(n);
+    closeExtras(); moveBy(n);
     const g=$('grid'); g.classList.remove('slide-l','slide-r'); void g.offsetWidth; g.classList.add(n>0?'slide-l':'slide-r');
   },{passive:true});
 })();
@@ -812,6 +812,16 @@ $('purgeGo').onclick=()=>{
 };
 $('remindGo').onclick=doBackup;
 $('remindLater').onclick=()=>{ls.set('todo-snooze',String(Date.now()+3*DAY));checkRemind();};
+/* ⋯ 메뉴와 그 아래 창(생일관리·이슈모음·할일정리·기기연결)을 모두 닫기.
+   맨 위 탭, 달·주 이동, 주간/월간, 오늘, 달력 날짜를 누르면 닫힌다. */
+function closeExtras(){
+  $('tools').hidden=true; $('more').setAttribute('aria-expanded',false);
+  if(typeof endBdayEdit==='function'&&!$('bdayPanel').hidden) endBdayEdit();
+  ['bdayPanel','issuePanel','purge','syncPanel'].forEach(i=>{const e=document.getElementById(i); if(e) e.hidden=true;});
+}
+$('tabs').addEventListener('click',closeExtras);
+document.querySelector('header').addEventListener('click',e=>{ if(e.target.closest('button')&&!e.target.closest('#more')) closeExtras(); });
+$('grid').addEventListener('click',e=>{ if(e.target.closest('button,[data-k],.day,.cell')) closeExtras(); });
 $('more').onclick=()=>{const open=$('tools').hidden;$('tools').hidden=!open;$('more').setAttribute('aria-expanded',open);if(open)$('tools').scrollIntoView({behavior:'smooth',block:'nearest'});};
 checkRemind();
 /* 설치 도우미: 브라우저로 열었을 때 앱 설치를 안내 */
