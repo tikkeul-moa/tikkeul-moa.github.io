@@ -11,15 +11,17 @@
 
 | 파일 | 내용 |
 |---|---|
-| `index.html` | 앱 전체 (HTML + CSS + JS 한 파일, 약 1,200줄) |
-| `sw.js` | 서비스 워커. 네트워크 우선(`cache:'no-store'`), 오프라인일 때만 캐시. 캐시 이름 `tikkeul-v4` |
+| `index.html` | 화면 뼈대 HTML (약 150줄). 처음 깜빡임 막는 짧은 스타일만 안에 있음 |
+| `style.css` | 화면 스타일 전부 (색 변수, 밝은/어두운 모드) |
+| `app.js` | 앱 동작 전부 (약 870줄). `lunar.js` 다음에 읽힘 |
+| `sw.js` | 서비스 워커. 네트워크 우선(`cache:'no-store'`), 오프라인일 때만 캐시. 캐시 이름 `tikkeul-v5`. 오프라인일 때 `?v=` 붙은 주소도 찾도록 `ignoreSearch` |
 | `lunar.js` | 음력 변환 라이브러리 korean-lunar-calendar 0.3.6 (MIT, 한국천문연구원 기준, 2050년까지) |
 | `guide.html` | 그림으로 보는 설치 안내 (안드로이드/아이폰 탭) |
-| `manifest.json`, `icon-192.png`, `icon-512.png` | 설치용 |
+| `manifest.json`, `icon-192.png`, `icon-512.png` | 설치용. 아이콘은 민트 그라데이션 + 흰 달력 + 민트 체크 (2026-11-16) |
 
 ## 작업 규칙
 
-- **수정할 때마다 버전 번호를 올린다.** `index.html`의 `<p class="ver" id="appVer">버전 YYYY.MM.DD-HHMM</p>` (⋯ 메뉴 아래에 표시). 사용자가 폰에 새 버전이 들어왔는지 이걸로 확인한다.
+- **수정할 때마다 버전 번호를 올린다.** `index.html`의 `<p class="ver" id="appVer">버전 YYYY.MM.DD-HHMM</p>` (⋯ 메뉴 아래에 표시). 사용자가 폰에 새 버전이 들어왔는지 이걸로 확인한다. **같은 번호로 `index.html`의 `style.css?v=…`, `app.js?v=…`도 함께 바꾼다** (브라우저가 옛 파일을 쓰지 않게).
 - 새 파일을 추가하면 `sw.js`의 `FILES`에 넣고 `CACHE` 이름 숫자를 올린다.
 - 기존 사용자 데이터가 깨지지 않게 한다. localStorage 키나 데이터 모양을 바꾸면 예전 데이터도 읽히게 하고, 백업 파일(`v` 번호)도 예전 것을 복원할 수 있게 한다.
 - 수정 후 시험: `python3 -m http.server 8765 --directory <저장소>`로 띄우고 Playwright(크롬, 390×844 또는 360×780)로 동작 확인. 반드시 `--directory`를 지정할 것(안 하면 엉뚱한 폴더를 띄움).
@@ -102,4 +104,3 @@
 - 2028년 공휴일 추가.
 - 주소에서 `anmiyoung1` 숨기기 → 추천안: GitHub 조직(예: `tikkeul`) 만들어 저장소를 `tikkeul.github.io`로 옮기기. 주소가 바뀌면 localStorage가 안 따라오므로 백업→복원 필요, 옛 주소에 이사 안내 페이지. **보류(2026-11-16, 일단 이대로 쓰기로).**
 - 폰·PC 함께 쓰기 → 추천안: 로그인 없는 '동기화 코드' + 무료 클라우드(Firebase 등). 만든다면 동기화 먼저, 주소 이사는 그 다음. **보류(2026-11-16).**
-- `index.html`이 커져서, 큰 기능을 더 넣기 전에 JS/CSS 파일 분리 정리 고려.
