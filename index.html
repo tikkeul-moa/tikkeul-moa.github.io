@@ -2,7 +2,7 @@
 <html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1f7a6d">
+<meta name="theme-color" content="#10a38f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="티끌모아">
@@ -16,20 +16,20 @@
 <style>
 /* Layout: 한 장짜리 앱 — 위에 월 달력(날짜마다 완료/전체), 아래에 선택한 날의 체크리스트(반복 + 일회성) */
 :root{
-  --bg:#f3f5f7; --surface:#ffffff; --line:#dde3e8; --fg:#18232c; --muted:#66727d;
-  --accent:#1f7a6d; --accent-soft:#d6ece8; --done:#2e9e5b; --warn:#c98a1b; --sun:#c4473a; --sat:#2f63b8;
-  --rep:#6a55b5; --rep-soft:#ebe6f8; --stamp:#d43d3d; --imp:#e8473a; --imp-soft:#fdecea; --bday:#c2417f; --bday-soft:#fcebf3; --meet:#2f63b8; --meet-soft:#e3ecfa;
+  --bg:#f2faf8; --surface:#ffffff; --line:#d5ebe6; --fg:#18232c; --muted:#66727d;
+  --accent:#10a38f; --accent-soft:#d3f3ec; --done:#22b07a; --warn:#c98a1b; --sun:#c4473a; --sat:#2f63b8;
+  --rep:#7a5cd6; --rep-soft:#efe9fd; --stamp:#d43d3d; --imp:#e8473a; --imp-soft:#fdecea; --bday:#c2417f; --bday-soft:#fcebf3; --meet:#2f8cf0; --meet-soft:#e1efff;
   --display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
   --body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#11181d; --surface:#1a232a; --line:#2b3740; --fg:#e6edf1; --muted:#93a1ab;
-  --accent:#4fbfae; --accent-soft:#1d3a36; --done:#4cc27e; --warn:#e0a640; --sun:#ef7a6c; --sat:#7ea6ec;
-  --rep:#b4a3f0; --rep-soft:#2c2745; --stamp:#ff7070; --imp:#ff6b5e; --imp-soft:#3a2522; --bday:#f08bbd; --bday-soft:#3a2230; --meet:#7ea6ec; --meet-soft:#1f2d44; color-scheme:dark}}
+  --accent:#3ccfb8; --accent-soft:#173f39; --done:#3fcf8e; --warn:#e0a640; --sun:#ef7a6c; --sat:#7ea6ec;
+  --rep:#b4a3f0; --rep-soft:#2c2745; --stamp:#ff7070; --imp:#ff6b5e; --imp-soft:#3a2522; --bday:#f08bbd; --bday-soft:#3a2230; --meet:#6cb4ff; --meet-soft:#1b3150; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#11181d; --surface:#1a232a; --line:#2b3740; --fg:#e6edf1; --muted:#93a1ab;
-  --accent:#4fbfae; --accent-soft:#1d3a36; --done:#4cc27e; --warn:#e0a640; --sun:#ef7a6c; --sat:#7ea6ec;
-  --rep:#b4a3f0; --rep-soft:#2c2745; --stamp:#ff7070; --imp:#ff6b5e; --imp-soft:#3a2522; --bday:#f08bbd; --bday-soft:#3a2230; --meet:#7ea6ec; --meet-soft:#1f2d44; color-scheme:dark}
+  --accent:#3ccfb8; --accent-soft:#173f39; --done:#3fcf8e; --warn:#e0a640; --sun:#ef7a6c; --sat:#7ea6ec;
+  --rep:#b4a3f0; --rep-soft:#2c2745; --stamp:#ff7070; --imp:#ff6b5e; --imp-soft:#3a2522; --bday:#f08bbd; --bday-soft:#3a2230; --meet:#6cb4ff; --meet-soft:#1b3150; color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
 .wrap{max-width:560px;margin:0 auto;padding-block:12px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -175,8 +175,8 @@ li.shift{transition:transform .15s}
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px}
 .tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:none;background:none;color:var(--fg);opacity:.75;font:inherit;font-weight:700;font-size:16px;line-height:1.4;padding:8px 0;border-radius:10px;cursor:pointer}
 .tabs button .ti{font-size:18px;line-height:1;filter:grayscale(1);opacity:.8}
-.tabs button[aria-selected="true"]{opacity:1;background:linear-gradient(135deg,#1f7a6d,#2e9e5b);color:#fff;box-shadow:0 2px 8px rgba(31,122,109,.35)}
-.tabs button[data-t="meet"][aria-selected="true"]{background:linear-gradient(135deg,#2f63b8,#5a4fc4);color:#fff;box-shadow:0 2px 8px rgba(47,99,184,.35)}
+.tabs button[aria-selected="true"]{opacity:1;background:linear-gradient(135deg,#12b39b,#4fd39a);color:#fff;box-shadow:0 2px 8px rgba(18,179,155,.35)}
+.tabs button[data-t="meet"][aria-selected="true"]{background:linear-gradient(135deg,#2f8cf0,#5cc1ff);color:#fff;box-shadow:0 2px 8px rgba(47,140,240,.35)}
 .tabs button[aria-selected="true"] .ti{filter:none;opacity:1}
 .mcnt{font-size:11px;font-weight:600;color:var(--meet);background:var(--meet-soft);border-radius:6px;padding:2px 5px;line-height:1;font-variant-numeric:tabular-nums}
 .m-add-toggle{height:40px;border:1px dashed var(--meet);background:none;color:var(--meet);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
@@ -329,7 +329,7 @@ li.mcard{padding:8px 2px;align-items:flex-start}
   <div class="toast" id="toast" hidden></div>
   <div class="undo" id="undo" hidden><span id="undoText"></span><button type="button" id="undoBtn">되돌리기</button></div>
   <div class="sheet" id="mSheet" hidden><div class="sheet-card" id="mSheetBody" role="dialog" aria-modal="true" aria-label="미팅 상세"></div></div>
-  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.16-1641</p></div>
+  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.16-1700</p></div>
   <div class="purge" id="purge" hidden>
     <div class="bp-head"><b class="purge-title">할일정리</b><button type="button" class="bp-close" id="purgeClose" aria-label="닫기">×</button></div>
     <label for="purgeDate">이 날짜부터 이후 할 일을 모두 정리해요</label>
