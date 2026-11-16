@@ -219,6 +219,10 @@ li.mcard{padding:8px 2px;align-items:flex-start}
 .sendrow input{flex:1}
 .sendrow button{flex:none;height:36px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
 .sendrow .go{background:var(--meet);border-color:var(--meet);color:#fff;font-weight:600}
+.mvrow{padding-left:30px;margin-top:6px}
+.mvrow input{height:36px;border:1px solid var(--line);border-radius:8px;padding:0 8px;font:inherit;font-size:14px;background:var(--surface);color:var(--fg);min-width:0}
+.mvrow .go{background:var(--accent);border-color:var(--accent)}
+.ask button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
 .iadd{display:flex;flex-direction:row;gap:8px}
 .iadd input{flex:1}
 .iadd .add{background:var(--meet);height:40px}
@@ -321,7 +325,7 @@ li.mcard{padding:8px 2px;align-items:flex-start}
   <div class="toast" id="toast" hidden></div>
   <div class="undo" id="undo" hidden><span id="undoText"></span><button type="button" id="undoBtn">되돌리기</button></div>
   <div class="sheet" id="mSheet" hidden><div class="sheet-card" id="mSheetBody" role="dialog" aria-modal="true" aria-label="미팅 상세"></div></div>
-  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.11-1835</p></div>
+  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.16-1640</p></div>
   <div class="purge" id="purge" hidden>
     <div class="bp-head"><b class="purge-title">할일정리</b><button type="button" class="bp-close" id="purgeClose" aria-label="닫기">×</button></div>
     <label for="purgeDate">이 날짜부터 이후 할 일을 모두 정리해요</label>
@@ -382,6 +386,7 @@ let col=null;
 let mode='once', pickWd=[];
 let asking=null;  // 삭제 확인 중인 반복 id
 let editing=null;  // {key,date} 수정 중인 할 일
+let moving=false;  // 메뉴에서 '날짜 넘기기'로 날짜 고르는 중
 const $=id=>document.getElementById(id);
 
 const dayRec=k=>{const d=days[k]||(days[k]={items:[],rdone:{},skip:[]});d.rimp=d.rimp||{};d.order=d.order||[];return d;};
@@ -521,7 +526,7 @@ function render(){
     rows.push({key,el:item({id:'i-'+it.id,text:it.text,done:!!it.done,imp:!!it.imp,
       onCheck:v=>{it.done=v;saveDay(sel);},
       onStar:()=>{it.imp=!it.imp;if(it.imp)toTop(key);saveDay(sel);},
-      onMenu:()=>{asking=asking===key?null:key;render();},
+      onMenu:()=>{asking=asking===key?null:key;moving=false;render();},
       onDel:()=>{asking=null;withUndo('"'+it.text+'" 지웠어요.',()=>{const d=dayRec(sel);d.items=d.items.filter(x=>x!==it);saveDay(sel);});},
       ask:asking===key?{it}:null,
       editing:!!(editing&&editing.key===key&&editing.date===sel),
@@ -535,16 +540,16 @@ function render(){
   enableDrag(ul);
 }
 
-/* 내일로 넘기기: 내일에 같은 내용이 없을 때만 추가 */
-function carryOver(it){
-  const from=sel, to=addDays(sel,1), norm=x=>String(x).replace(/\s+/g,' ').trim();
+/* 날짜 넘기기: 고른 날(기본 내일)에 같은 내용이 없을 때만 추가 */
+function carryOver(it,to){
+  const from=sel, norm=x=>String(x).replace(/\s+/g,' ').trim();
   const src=dayRec(from); src.items=src.items.filter(x=>x!==it);
   const dst=dayRec(to);
   const dup=dst.items.some(x=>norm(x.text)===norm(it.text))||routinesFor(to).some(r=>norm(r.text)===norm(it.text));
   if(!dup){
     const nid=uid6();
     dst.items.push({id:nid,text:it.text,done:false,imp:!!it.imp});
-    // 꼭 할 일은 다음 날 목록 맨 위로
+    // 꼭 할 일은 넘긴 날 목록 맨 위로
     if(it.imp){const nk='i:'+nid;dst.order=[nk,...(dst.order||[]).filter(k=>k!==nk)];}
   } else if(it.imp){
     // 같은 할 일이 이미 있으면 그 줄을 꼭 할 일로 표시하고 맨 위로
@@ -554,7 +559,7 @@ function carryOver(it){
   }
   saveDay(from); if(!dup||it.imp) saveDay(to);
   const d=parse(to), msg=(d.getMonth()+1)+'월 '+d.getDate()+'일';
-  return dup?msg+'에 같은 할 일이 이미 있어서 오늘 것만 지웠어요.':msg+'로 넘겼어요.';
+  return dup?msg+'에 같은 할 일이 이미 있어서 이 날 것만 지웠어요.':msg+'로 넘겼어요.';
 }
 
 /* 별표한 줄을 맨 위로 */
@@ -646,8 +651,9 @@ function item(o){
     sb.onclick=()=>{asking=null;o.onStar();};
     a.append(sb);
     if(o.ask.it){
-      const b1=document.createElement('button');b1.type='button';b1.textContent='내일로 넘기기';
-      b1.onclick=()=>{asking=null;withUndo('',()=>carryOver(o.ask.it));};
+      const b1=document.createElement('button');b1.type='button';b1.textContent='날짜 넘기기';
+      b1.setAttribute('aria-pressed',moving);
+      b1.onclick=()=>{moving=!moving;render();};
       a.append(b1);
     } else {
       const r=o.ask.routine;
@@ -657,6 +663,20 @@ function item(o){
     }
     const eb=document.createElement('button');eb.type='button';eb.textContent='수정';eb.onclick=o.onEdit;
     a.append(eb); li.appendChild(a);
+    if(o.ask.it&&moving){
+      // 넘길 날짜 고르기 (기본 내일)
+      const row=document.createElement('div');row.className='sendrow mvrow';
+      const di=document.createElement('input');di.type='date';di.value=addDays(sel,1);di.setAttribute('aria-label','넘길 날짜');
+      const go=document.createElement('button');go.type='button';go.className='go';go.textContent='넘기기';
+      go.onclick=()=>{
+        const to=di.value;
+        if(!to){toast('날짜를 골라 주세요.');return;}
+        if(to===sel){toast('지금 보고 있는 날이에요. 다른 날을 골라 주세요.');return;}
+        asking=null;moving=false;withUndo('',()=>carryOver(o.ask.it,to));
+      };
+      const cn=document.createElement('button');cn.type='button';cn.textContent='취소';cn.onclick=()=>{moving=false;render();};
+      row.append(di,go,cn); li.appendChild(row);
+    }
   }
   return li;
 }
