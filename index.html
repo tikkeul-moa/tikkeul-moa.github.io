@@ -184,6 +184,10 @@ li.shift{transition:transform .15s}
 .mform input,.sheet-card input[type=text],.sheet-card input[type=time],.sheet-card input[type=date]{height:40px}
 .mform textarea,.sheet-card textarea{resize:vertical;line-height:1.5}
 .mtime{display:flex;align-items:center;gap:6px}
+.mdate{display:flex;align-items:center;gap:6px}
+.mdate input{flex:1;min-width:0}
+.mdate .go{flex:none;height:36px;border:1px solid var(--meet);background:var(--meet);color:#fff;border-radius:8px;padding:0 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.mdate .go:disabled{background:var(--bg);color:var(--muted);border-color:var(--line);font-weight:400;cursor:default}
 .mtime input{flex:1}
 .mform .seg button[aria-pressed="true"],.mform .seg button[data-r="once"][aria-pressed="true"]{background:var(--meet);border-color:var(--meet);color:#fff}
 .mform .wd button[aria-pressed="true"]{background:var(--meet-soft);border-color:var(--meet);color:var(--meet)}
@@ -325,7 +329,7 @@ li.mcard{padding:8px 2px;align-items:flex-start}
   <div class="toast" id="toast" hidden></div>
   <div class="undo" id="undo" hidden><span id="undoText"></span><button type="button" id="undoBtn">되돌리기</button></div>
   <div class="sheet" id="mSheet" hidden><div class="sheet-card" id="mSheetBody" role="dialog" aria-modal="true" aria-label="미팅 상세"></div></div>
-  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.16-1631</p></div>
+  <div class="tools" id="tools" hidden><button type="button" id="bdayOpen" class="bday-btn"><span aria-hidden="true">🎂</span> 생일관리</button><button type="button" id="issueOpen">이슈모음</button><button type="button" id="purgeOpen">할일정리</button><button type="button" id="backup">백업저장</button><label class="restore">백업복원<input type="file" id="restoreFile" accept="application/json,.json" hidden></label><p class="ver" id="appVer">버전 2026.11.16-1640</p></div>
   <div class="purge" id="purge" hidden>
     <div class="bp-head"><b class="purge-title">할일정리</b><button type="button" class="bp-close" id="purgeClose" aria-label="닫기">×</button></div>
     <label for="purgeDate">이 날짜부터 이후 할 일을 모두 정리해요</label>
@@ -777,6 +781,27 @@ function useLocal(msg){
 
 /* ===== 미팅 ===== */
 const mKey=(m,k)=>m.id+'|'+k;
+/* 미팅 날짜 옮기기. 반복 미팅은 그날만 빼고 새 날짜에 한 번짜리 미팅을 만든다. 결정사항·이슈도 함께 옮긴다. */
+function moveMeeting(m,from,to){
+  let nm=m;
+  if(m.wd){
+    m.skip=[...(m.skip||[]),from];
+    nm={id:uid6(),title:m.title,from:m.from,to:m.to,place:m.place,memo:m.memo,date:to};
+    meetings.push(nm);
+  } else m.date=to;
+  const sk=mKey(m,from), dk=mKey(nm,to);
+  if(mnotes[sk]){
+    if(mnotes[dk]){ // 옮길 날에 이미 메모가 있으면 합치기
+      const a=mnotes[dk], b=mnotes[sk];
+      a.dec=[a.dec,b.dec].filter(x=>x&&x.trim()).join('\n');
+      a.issues=[...(a.issues||[]),...(b.issues||[])];
+    } else mnotes[dk]=mnotes[sk];
+    delete mnotes[sk];
+  }
+  saveLocal(); render();
+  const d=parse(to);
+  return '"'+m.title+'" 미팅을 '+(d.getMonth()+1)+'월 '+d.getDate()+'일로 옮겼어요.';
+}
 function meetingsOn(k){
   const w=parse(k).getDay();
   return meetings.filter(m=>m.wd?(m.wd.includes(w)&&k>=m.start&&(!m.end||k<=m.end)&&!(m.skip||[]).includes(k)):m.date===k)
@@ -890,6 +915,18 @@ function drawSheet(){
   const x=mk('button','bp-close','×');x.type='button';x.setAttribute('aria-label','닫기');x.onclick=closeSheet;head.appendChild(x);
   c.appendChild(head);
   c.appendChild(sfield('제목',sinput('text',m.title,'미팅 제목',v=>{if(v.trim())m.title=v.trim();})));
+  {// 날짜 이동: 날짜를 고르고 [이동] (반복 미팅은 이 날 한 번만)
+    const dr=mk('div','mdate');
+    const di=mk('input');di.type='date';di.value=k;di.setAttribute('aria-label','옮길 날짜');
+    const go=mk('button','go','이동');go.type='button';go.disabled=true;
+    di.oninput=di.onchange=()=>{go.disabled=!di.value||di.value===k;};
+    go.onclick=()=>{
+      const to=di.value; if(!to||to===k) return;
+      closeSheet();
+      withUndo('',()=>moveMeeting(m,k,to));
+    };
+    dr.append(di,go); c.appendChild(sfield('날짜',dr));
+  }
   const tr=mk('div','mtime');
   tr.append(sinput('time',m.from,'',v=>{m.from=v;}),mk('span',null,'~'),sinput('time',m.to,'',v=>{m.to=v;}));
   c.appendChild(sfield('시간',tr));
@@ -900,7 +937,7 @@ function drawSheet(){
     endB.onclick=()=>{const t=m.title;closeSheet();withUndo('"'+t+'" 반복을 이 날부터 끝냈어요.',()=>{if(k<=m.start) meetings=meetings.filter(x=>x!==m); else m.end=addDays(k,-1);saveLocal();render();});};
     c.appendChild(endB);
   }
-  if(m.wd) c.appendChild(mk('p','bp-note','반복되는 미팅이에요. 제목·시간·장소·내용은 모든 날짜에 함께 바뀌어요. 결정사항과 이슈는 날짜마다 따로 적어요.'));
+  if(m.wd) c.appendChild(mk('p','bp-note','반복되는 미팅이에요. 제목·시간·장소·내용은 모든 날짜에 함께 바뀌어요. 날짜 [이동]은 이 날 한 번만 옮겨져요. 결정사항과 이슈는 날짜마다 따로 적어요.'));
   c.appendChild(mk('div','sec-title','회의 후 정리'));
   c.appendChild(sfield('결정사항',stext(nt.dec,'회의에서 정해진 것',v=>{nt.dec=v;})));
   const left=nt.issues.filter(i=>!i.done).length;
