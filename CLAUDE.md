@@ -2,10 +2,12 @@
 
 개인 할 일 + 미팅 관리 앱. 로그인 없이 핸드폰에 설치해서 쓰는 PWA.
 
-- 앱 주소: https://anmiyoung1.github.io/tikkeul/
-- 그림 설치 안내: https://anmiyoung1.github.io/tikkeul/guide.html
+- 앱 주소: https://tikkeul-moa.github.io/ (2026-11-16 이사. GitHub 조직 `tikkeul-moa`, 저장소 `tikkeul-moa/tikkeul-moa.github.io`)
+- 그림 설치 안내: https://tikkeul-moa.github.io/guide.html
+- 예전 주소 https://anmiyoung1.github.io/tikkeul/ 은 안내 페이지(저장소 `anmiyoung1/tikkeul`, 새로 만든 것): 그 기기의 데이터를 읽어 기기연결 링크(`새주소#sync=코드`) 또는 백업 파일 받기를 보여 주고, 예전 서비스 워커·캐시를 지움. 지우지 말 것(친구들 데이터 옮기는 길).
 - 배포: `main` 브랜치에 push하면 GitHub Pages로 자동 배포. 폰 반영까지 최대 약 10분.
-- 사용자: 본인 + 친구 몇 명. 데이터는 각자 폰 브라우저(localStorage)에만 저장, 서버 없음.
+- 사용자: 본인 + 친구 몇 명. 데이터는 각자 기기 브라우저(localStorage)에 저장. 기기연결을 켜면 암호화해서 Firebase에도 저장.
+- 주의: localStorage는 주소(도메인)별이라, 주소를 또 바꾸면 데이터가 안 따라옴.
 
 ## 파일
 
@@ -114,5 +116,5 @@
 - 할일 줄의 ×를 없애고 [삭제]를 메뉴로 옮길지 → 사용자가 고민 중 (× 한 번 삭제의 편리함 vs 글자 공간).
 - 미팅을 폰 캘린더에 추가(.ics, 10분 전 알림) 버튼 → 제안만 함, 미결정. (문자·카톡 알림은 서버 필요해서 안 하기로.)
 - 2028년 공휴일 추가.
-- 주소에서 `anmiyoung1` 숨기기 → 추천안: GitHub 조직(예: `tikkeul`) 만들어 저장소를 `tikkeul.github.io`로 옮기기. 주소가 바뀌면 localStorage가 안 따라오므로 백업→복원 필요, 옛 주소에 이사 안내 페이지. **하기로 함(2026-11-16): 기기연결을 켠 뒤 진행.** 새 주소에서는 연결 코드로 데이터가 따라옴.
-- 기기연결: 켜짐(2026-11-16). Firebase 프로젝트 `tikkeul-4eee7`(Spark, Firestore `(default)`, 서울 asia-northeast3, 웹 앱 `tikkeul`). 규칙은 사용자가 콘솔에 게시(초대 암호는 사용자만 앎). 그다음 주소 이사(`tikkeul.github.io`, 안 되면 `tikkeulmoa`).
+- 주소 이사: 끝남(2026-11-16) → `tikkeul-moa.github.io` (`tikkeul`, `tikkeulmoa`는 이미 다른 사람이 씀).
+- 기기연결: 켜짐(2026-11-16). Firebase 프로젝트 `tikkeul-4eee7`(Spark, Firestore `(default)`, 서울 asia-northeast3, 웹 앱 `tikkeul`). 규칙은 사용자가 콘솔에 게시(초대 암호는 사용자만 앎). 

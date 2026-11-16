@@ -50,7 +50,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-off
   <div id="steps"></div>
   <div class="done">✔ 홈 화면에 <b>티끌모아</b> 아이콘이 생기면 끝이에요. 다음부터는 링크 대신 <b>아이콘으로 여세요.</b><br>할 일 기록은 내 핸드폰에만 저장돼요.</div>
   <a class="go" href="./">티끌모아 열기</a>
-  <p class="note">https://anmiyoung1.github.io/tikkeul/</p>
+  <p class="note">https://tikkeul-moa.github.io/</p>
 </div>
 <script>
 const C={frame:'#2a333b',screen:'#ffffff',bar:'#eef1f4',ink:'#5d6974',acc:'#10a38f',hi:'#e8473a',menu:'#ffffff',kakao:'#fee500'};
@@ -85,7 +85,7 @@ function popup(title,btn){
   '<rect x="16" y="168" width="118" height="86" rx="10" fill="#fff"/>'+
   '<image href="icon-192.png" x="24" y="178" width="22" height="22"/>'+
   '<text x="52" y="188" font-size="10" font-weight="700" fill="#18232c" font-family="IBM Plex Sans KR,sans-serif">'+title+'</text>'+
-  '<text x="52" y="200" font-size="8" fill="#66727d" font-family="IBM Plex Sans KR,sans-serif">anmiyoung1.github.io</text>'+
+  '<text x="52" y="200" font-size="8" fill="#66727d" font-family="IBM Plex Sans KR,sans-serif">tikkeul-moa.github.io</text>'+
   '<rect x="78" y="222" width="48" height="22" rx="11" fill="'+C.acc+'"/>'+
   '<text x="102" y="237" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="IBM Plex Sans KR,sans-serif">'+btn+'</text>'+
   '<text x="58" y="237" text-anchor="middle" font-size="10" fill="#66727d" font-family="IBM Plex Sans KR,sans-serif">취소</text>'+
@@ -104,7 +104,7 @@ function homescreen(){
 function kakao(withMenu,ios){
   let s='<rect x="9" y="9" width="132" height="26" rx="0" fill="#f7f7f7"/><path d="M9 24 q0 -15 15 -15 h102 q15 0 15 15 z" fill="#f7f7f7"/>'+
   '<text x="20" y="28" font-size="12" fill="#333">✕</text><rect x="36" y="15" width="70" height="15" rx="5" fill="#ececec"/>'+
-  '<text x="41" y="26" font-size="7.5" fill="#555" font-family="sans-serif">anmiyoung1.github.io</text><circle cx="120" cy="22" r="7" fill="'+C.kakao+'"/>';
+  '<text x="41" y="26" font-size="7.5" fill="#555" font-family="sans-serif">tikkeul-moa.github.io</text><circle cx="120" cy="22" r="7" fill="'+C.kakao+'"/>';
   s+=appBody(42);
   s+='<rect x="9" y="236" width="132" height="25" fill="#f7f7f7"/><path d="M9 246 v0 h132" stroke="#e1e1e1"/>'+
   '<text x="24" y="253" font-size="10" fill="#bbb">←</text><text x="52" y="253" font-size="10" fill="#bbb">→</text><text x="82" y="253" font-size="10" fill="#777">↻</text>'+
@@ -117,7 +117,7 @@ function kakao(withMenu,ios){
 function chrome(withMenu){
   let s='<path d="M9 24 q0 -15 15 -15 h102 q15 0 15 15 v14 h-132 z" fill="#2b7d6f"/>'+
   '<rect x="16" y="15" width="100" height="18" rx="9" fill="#ffffff" opacity=".9"/>'+
-  '<text x="24" y="27" font-size="7.5" fill="#333" font-family="sans-serif">anmiyoung1.github.io</text>'+
+  '<text x="24" y="27" font-size="7.5" fill="#333" font-family="sans-serif">tikkeul-moa.github.io</text>'+
   '<text x="103" y="28" font-size="9" fill="#2b7d6f" text-anchor="middle">⤓</text>'+
   '<text x="130" y="29" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">⋮</text>';
   s+=appBody(44);
@@ -131,7 +131,7 @@ function safari(withSheet){
   let s='<rect x="9" y="9" width="132" height="20" fill="#f6f6f6"/><path d="M9 24 q0 -15 15 -15 h102 q15 0 15 15 z" fill="#f6f6f6"/>';
   s+=appBody(36);
   s+='<rect x="9" y="214" width="132" height="47" fill="#f6f6f6"/><rect x="22" y="220" width="106" height="16" rx="8" fill="#e6e6e6"/>'+
-  '<text x="75" y="231" text-anchor="middle" font-size="7.5" fill="#444" font-family="sans-serif">anmiyoung1.github.io</text>'+
+  '<text x="75" y="231" text-anchor="middle" font-size="7.5" fill="#444" font-family="sans-serif">tikkeul-moa.github.io</text>'+
   '<text x="26" y="252" font-size="10" fill="#2f7cf6">‹</text><text x="50" y="252" font-size="10" fill="#bbb">›</text>';
   s+='<g transform="translate(75 246)"><rect x="-5" y="-3" width="10" height="9" rx="1.5" fill="none" stroke="#2f7cf6" stroke-width="1.4"/><path d="M0 -9 v9 M-3 -6 l3 -3 l3 3" fill="none" stroke="#2f7cf6" stroke-width="1.4"/></g>';
   s+='<text x="100" y="252" font-size="10" fill="#2f7cf6">⧉</text><text x="122" y="252" font-size="10" fill="#2f7cf6">☰</text>';
@@ -156,7 +156,7 @@ function iosAdd(){
   '<text x="128" y="34" text-anchor="end" font-size="9.5" font-weight="700" fill="#2f7cf6" font-family="IBM Plex Sans KR,sans-serif">추가</text>'+
   '<rect x="16" y="48" width="118" height="44" rx="8" fill="#fff"/><image href="icon-192.png" x="22" y="54" width="32" height="32"/>'+
   '<text x="62" y="68" font-size="10" fill="#222" font-family="IBM Plex Sans KR,sans-serif">티끌모아</text>'+
-  '<text x="62" y="81" font-size="7.5" fill="#888" font-family="sans-serif">anmiyoung1.github.io</text>'+
+  '<text x="62" y="81" font-size="7.5" fill="#888" font-family="sans-serif">tikkeul-moa.github.io</text>'+
   ring(119,30,14)+hand(124,38);
   return s;
 }
