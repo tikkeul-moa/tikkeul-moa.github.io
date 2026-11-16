@@ -220,3 +220,21 @@ li.mcard{padding:8px 2px;align-items:flex-start}
 .ig-head button{background:none;border:none;color:var(--meet);font:inherit;font-weight:600;padding:2px 0;cursor:pointer;text-align:left}
 #issueList li.ig-item{border-top:none;padding-left:4px}
 @media (prefers-reduced-motion:reduce){.tools .bday-btn:hover span{animation:none}.grid.slide-l,.grid.slide-r{animation:none}.bar i{transition:none}.big-stamp.pop{animation:none}}
+/* 기기연결 */
+.tools .sync-btn.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.sync-panel .bp-head b{color:var(--accent)}
+.sync-panel #syncOff,.sync-panel #syncOn{display:flex;flex-direction:column;gap:10px}
+.sync-panel [hidden]{display:none!important}
+.sy-box{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:10px;padding:10px}
+.sync-panel input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:0 10px;font:inherit;font-size:14px;height:40px;box-sizing:border-box}
+#syncCodeIn{font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+.sync-panel button{height:40px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;padding:0 12px;font:inherit;font-size:13px;cursor:pointer}
+.sync-panel button.go{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.sync-panel button:disabled{opacity:.5;cursor:default}
+.sync-panel .bp-close{border:none;background:none;height:32px;padding:0}
+.sy-state{margin:0;font-weight:600;color:var(--accent)}
+.sy-state.bad{color:var(--warn)}
+.sy-code{background:var(--accent-soft);border-radius:10px;padding:12px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600;letter-spacing:1px;color:var(--fg);user-select:all;overflow-wrap:anywhere}
+.sy-btns button{flex:1}
+.sync-panel .sy-off{color:var(--imp);border-color:var(--imp-soft)}
+.sync-panel .sy-off.armed{background:var(--imp);color:#fff;border-color:var(--imp)}
