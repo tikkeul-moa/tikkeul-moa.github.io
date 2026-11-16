@@ -14,7 +14,7 @@
 | `index.html` | 화면 뼈대 HTML (약 150줄). 처음 깜빡임 막는 짧은 스타일만 안에 있음 |
 | `style.css` | 화면 스타일 전부 (색 변수, 밝은/어두운 모드) |
 | `app.js` | 앱 동작 전부 (약 870줄). `lunar.js` 다음에 읽힘 |
-| `sync.js` | 기기연결(동기화). `app.js` 다음에 읽힘. `SYNC_CFG`(projectId, apiKey)가 비어 있으면 [기기연결] 버튼을 숨김 |
+| `sync.js` | 기기연결(동기화). `app.js` 다음에 읽힘. `SYNC_CFG`(projectId `tikkeul-4eee7`, apiKey)가 비어 있으면 [기기연결] 버튼을 숨김 |
 | `sw.js` | 서비스 워커. 네트워크 우선(`cache:'no-store'`), 오프라인일 때만 캐시. 캐시 이름 `tikkeul-v6`. 바깥 주소(Firestore 등) 요청은 건드리지 않음. 오프라인일 때 `?v=` 붙은 주소도 찾도록 `ignoreSearch` |
 | `lunar.js` | 음력 변환 라이브러리 korean-lunar-calendar 0.3.6 (MIT, 한국천문연구원 기준, 2050년까지) |
 | `guide.html` | 그림으로 보는 설치 안내 (안드로이드/아이폰 탭) |
@@ -115,4 +115,4 @@
 - 미팅을 폰 캘린더에 추가(.ics, 10분 전 알림) 버튼 → 제안만 함, 미결정. (문자·카톡 알림은 서버 필요해서 안 하기로.)
 - 2028년 공휴일 추가.
 - 주소에서 `anmiyoung1` 숨기기 → 추천안: GitHub 조직(예: `tikkeul`) 만들어 저장소를 `tikkeul.github.io`로 옮기기. 주소가 바뀌면 localStorage가 안 따라오므로 백업→복원 필요, 옛 주소에 이사 안내 페이지. **하기로 함(2026-11-16): 기기연결을 켠 뒤 진행.** 새 주소에서는 연결 코드로 데이터가 따라옴.
-- 기기연결: 코드는 완성(2026-11-16). **Firebase 프로젝트 만들고 `sync.js`의 `SYNC_CFG`를 채워야 켜짐.** 그다음 주소 이사(`tikkeul.github.io`, 안 되면 `tikkeulmoa`).
+- 기기연결: 켜짐(2026-11-16). Firebase 프로젝트 `tikkeul-4eee7`(Spark, Firestore `(default)`, 서울 asia-northeast3, 웹 앱 `tikkeul`). 규칙은 사용자가 콘솔에 게시(초대 암호는 사용자만 앎). 그다음 주소 이사(`tikkeul.github.io`, 안 되면 `tikkeulmoa`).

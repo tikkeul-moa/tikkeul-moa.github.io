@@ -5,7 +5,7 @@
  * - 새 코드를 만들 때만 초대 암호가 필요하다(Firestore 규칙에서 확인).
  * - 항목(날짜·반복·생일·미팅·메모)마다 마지막 수정 시각을 따로 기록해서, 두 기기에서 고친 내용을 합친다.
  */
-const SYNC_CFG={projectId:'',apiKey:''}; // Firebase 프로젝트 값 (설정 후 채움)
+const SYNC_CFG={projectId:'tikkeul-4eee7',apiKey:'AIzaSyD-PerT124TpOrUmBWxRVizWb0IsmKMXt4'}; // Firebase 프로젝트 값 (공개돼도 되는 값. 접근은 Firestore 규칙이 막음)
 (function(){
 const T=window.__SYNC_TEST||null; // 시험용
 const projectId=(T&&T.projectId)||SYNC_CFG.projectId, apiKey=(T&&T.apiKey)||SYNC_CFG.apiKey;
