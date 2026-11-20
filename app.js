@@ -54,6 +54,28 @@ function stampSVG(){
     '<text x="50" y="66" text-anchor="middle" font-size="19" font-weight="700" fill="currentColor" font-family="Do Hyeon,sans-serif">했어요</text></svg>';
 }
 const STAMP=stampSVG();
+/* 일주일(일~토) 7일을 모두 끝낸 주: 토요일에 찍는 큰 도장 */
+const GOLD='#e0a400', GOLD2='#b8860b';
+function weekSVG(){ // 왕관 금도장 "수고했어요"
+  let d='';const N=20,R=47,r=42;
+  for(let i=0;i<=N*2;i++){const a=Math.PI*i/N, rr=i%2?r:R;d+=(i?'L':'M')+(50+rr*Math.cos(a)).toFixed(1)+' '+(50+rr*Math.sin(a)).toFixed(1);}
+  return '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="'+d+'Z" fill="#fff6d1" stroke="'+GOLD+'" stroke-width="4" stroke-linejoin="round"/>'+
+    '<circle cx="50" cy="50" r="34" fill="none" stroke="'+GOLD+'" stroke-width="2.5"/>'+
+    '<path d="M31 50l3-21 9 10 7-14 7 14 9-10 3 21z" fill="'+GOLD+'"/><circle cx="34" cy="28" r="3" fill="'+GOLD+'"/><circle cx="50" cy="24" r="3" fill="'+GOLD+'"/><circle cx="66" cy="28" r="3" fill="'+GOLD+'"/>'+
+    '<text x="50" y="70" text-anchor="middle" font-size="15" font-weight="700" fill="'+GOLD2+'" font-family="Do Hyeon,sans-serif">수고했어요</text></svg>';
+}
+const WSTAMP=weekSVG();
+/* 토요일 sat 기준으로 그 주(일~토)를 모두 끝냈는지.
+   할 일이 없는 날은 끝낸 것으로 친다. 단, 그 주에 할 일이 있는 날이 하루는 있어야 하고, 토요일이 오늘이거나 지난 날이어야 한다. */
+function weekDone(sat){
+  if(key(sat)>TODAY) return false;
+  let any=false;
+  for(let i=6;i>=0;i--){
+    const t=tally(key(new Date(sat.getFullYear(),sat.getMonth(),sat.getDate()-i)));
+    if(t.total){ if(t.done<t.total) return false; any=true; }
+  }
+  return any;
+}
 /* 생일 (양력/음력) */
 let bdays=[];   // [{id,name,m,d,lunar}]
 const LUNAR=(typeof KoreanLunarCalendar==='function')?new KoreanLunarCalendar():null;
@@ -112,6 +134,10 @@ function render(){
     if(tab==='meet'){
       const mc=meetingsOn(k).length;
       if(mc){const c=document.createElement('span');c.className='mcnt';c.textContent=mc+'건';b.appendChild(c);}
+    } else if(dt.getDay()===6&&weekDone(dt)){
+      // 일주일 완주: 토요일에 큰 금도장 (토요일에 할 일이 없어도)
+      b.classList.add('stamped');
+      const s=document.createElement('span');s.className='wstamp';s.innerHTML=WSTAMP;s.title='일주일 동안 수고했어요';b.appendChild(s);
     } else if(t.total&&t.done===t.total&&k<=TODAY){
       b.classList.add('stamped');
       const s=document.createElement('span');s.className='stamp';s.innerHTML=STAMP;b.appendChild(s);
@@ -131,8 +157,10 @@ function render(){
   if(HOL[sel]){const h=document.createElement('span');h.className='hol-name';h.textContent=HOL[sel];$('dayLabel').appendChild(h);}
   const t=tally(sel);
   $('score').textContent='('+t.done+' / '+t.total+' 완료)';
-  const allDone=t.total>0&&t.done===t.total&&sel<=TODAY, bs=$('bigStamp');
-  if(!bs.innerHTML) bs.innerHTML=STAMP;
+  const wkBig=sd.getDay()===6&&weekDone(sd);
+  const allDone=wkBig||(t.total>0&&t.done===t.total&&sel<=TODAY), bs=$('bigStamp');
+  bs.innerHTML=wkBig?WSTAMP:STAMP; bs.classList.toggle('wk',wkBig);
+  if(wkBig) $('score').textContent+=' · 일주일 동안 수고했어요!';
   bs.hidden=!allDone;
   if(allDone&&lastSelDone===false){bs.classList.remove('pop');void bs.offsetWidth;bs.classList.add('pop');}
   lastSelDone=allDone;
