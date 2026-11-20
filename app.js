@@ -65,6 +65,26 @@ function weekSVG(){ // 왕관 금도장 "수고했어요"
     '<text x="50" y="70" text-anchor="middle" font-size="15" font-weight="700" fill="'+GOLD2+'" font-family="Do Hyeon,sans-serif">수고했어요</text></svg>';
 }
 const WSTAMP=weekSVG();
+/* 한 달을 모두 끝낸 달: 마지막 날에 찍는 더 큰 도장 */
+function monthSVG(m){ // 트로피 금메달 "N월 완주" + 빨간 리본
+  const T=(y,sz,t,c)=>'<text x="50" y="'+y+'" text-anchor="middle" font-size="'+sz+'" font-weight="700" fill="'+(c||'#fff')+'" font-family="Do Hyeon,sans-serif">'+t+'</text>';
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">'+
+      '<path d="M14 66l-10 14 12-1 5 11 9-16zM86 66l10 14-12-1-5 11-9-16z" fill="#e5484d"/>'+
+      '<circle cx="50" cy="48" r="44" fill="'+GOLD+'" stroke="'+GOLD2+'" stroke-width="3"/><circle cx="50" cy="48" r="37" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2" stroke-dasharray="3 3"/>'+
+      '<path d="M37 18h26v9a13 13 0 0 1-26 0z" fill="#fff"/><path d="M37 21h-7a7 7 0 0 0 8 11M63 21h7a7 7 0 0 1-8 11" fill="none" stroke="#fff" stroke-width="3"/><rect x="46" y="39" width="8" height="5" fill="#fff"/><rect x="40" y="44" width="20" height="4" rx="1.5" fill="#fff"/>'+
+      T(66,17,m+'월')+T(82,13,'완주')+'</svg>';
+}
+/* 그 달을 모두 끝냈는지: 빈 날은 끝낸 것으로, 할 일 있는 날이 하루는 있어야 하고, 마지막 날이 오늘 이전 */
+function monthDone(last){
+  if(key(last)>TODAY) return false;
+  let any=false;
+  for(let i=1;i<=last.getDate();i++){
+    const t=tally(key(new Date(last.getFullYear(),last.getMonth(),i)));
+    if(t.total){ if(t.done<t.total) return false; any=true; }
+  }
+  return any;
+}
+const isLastDay=dt=>new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1).getDate()===1;
 /* 토요일 sat 기준으로 그 주(일~토)를 모두 끝냈는지.
    할 일이 없는 날은 끝낸 것으로 친다. 단, 그 주에 할 일이 있는 날이 하루는 있어야 하고, 토요일이 오늘이거나 지난 날이어야 한다. */
 function weekDone(sat){
@@ -134,6 +154,10 @@ function render(){
     if(tab==='meet'){
       const mc=meetingsOn(k).length;
       if(mc){const c=document.createElement('span');c.className='mcnt';c.textContent=mc+'건';b.appendChild(c);}
+    } else if(isLastDay(dt)&&monthDone(dt)){
+      // 한 달 완주: 마지막 날에 가장 큰 도장 (일주일 도장보다 우선)
+      b.classList.add('stamped');
+      const s=document.createElement('span');s.className='mstamp';s.innerHTML=monthSVG(dt.getMonth()+1);s.title='한 달 동안 수고했어요';b.appendChild(s);
     } else if(dt.getDay()===6&&weekDone(dt)){
       // 일주일 완주: 토요일에 큰 금도장 (토요일에 할 일이 없어도)
       b.classList.add('stamped');
@@ -157,10 +181,12 @@ function render(){
   if(HOL[sel]){const h=document.createElement('span');h.className='hol-name';h.textContent=HOL[sel];$('dayLabel').appendChild(h);}
   const t=tally(sel);
   $('score').textContent='('+t.done+' / '+t.total+' 완료)';
-  const wkBig=sd.getDay()===6&&weekDone(sd);
-  const allDone=wkBig||(t.total>0&&t.done===t.total&&sel<=TODAY), bs=$('bigStamp');
-  bs.innerHTML=wkBig?WSTAMP:STAMP; bs.classList.toggle('wk',wkBig);
-  if(wkBig) $('score').textContent+=' · 일주일 동안 수고했어요!';
+  const moBig=isLastDay(sd)&&monthDone(sd);
+  const wkBig=!moBig&&sd.getDay()===6&&weekDone(sd);
+  const allDone=moBig||wkBig||(t.total>0&&t.done===t.total&&sel<=TODAY), bs=$('bigStamp');
+  bs.innerHTML=moBig?monthSVG(sd.getMonth()+1):wkBig?WSTAMP:STAMP; bs.classList.toggle('wk',wkBig); bs.classList.toggle('mo',moBig);
+  if(moBig) $('score').textContent+=' · 한 달 동안 정말 수고했어요!';
+  else if(wkBig) $('score').textContent+=' · 일주일 동안 수고했어요!';
   bs.hidden=!allDone;
   if(allDone&&lastSelDone===false){bs.classList.remove('pop');void bs.offsetWidth;bs.classList.add('pop');}
   lastSelDone=allDone;
