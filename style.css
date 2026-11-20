@@ -163,10 +163,10 @@ li.shift{transition:transform .15s}
 .remind button{border:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
 .remind .go{background:var(--accent);color:#fff;font-weight:600}
 .remind .later{background:none;color:var(--muted)}
-.undo{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:6px 6px 6px 16px;border-radius:999px;font-size:13px;width:max-content;max-width:calc(100% - 32px);display:flex;align-items:center;gap:10px;z-index:41;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.undo span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.undo{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:6px 6px 6px 16px;border-radius:18px;font-size:13px;width:max-content;max-width:calc(100% - 32px);display:flex;align-items:center;gap:10px;z-index:41;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.undo span{min-width:0;line-height:1.35;word-break:keep-all} /* 긴 안내(이사 놀리기)도 두 줄로 */
 .undo button{flex:none;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;max-width:calc(100% - 32px);text-align:center;z-index:40}
+.toast{word-break:keep-all;line-height:1.35;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;max-width:calc(100% - 32px);text-align:center;z-index:40}
 .tools button,.restore{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px}
 .tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:none;background:none;color:var(--fg);opacity:.75;font:inherit;font-weight:700;font-size:16px;line-height:1.4;padding:8px 0;border-radius:10px;cursor:pointer}
@@ -249,3 +249,7 @@ li.mcard{padding:8px 2px;align-items:flex-start}
 .sy-btns button{flex:1}
 .sync-panel .sy-off{color:var(--imp);border-color:var(--imp-soft)}
 .sync-panel .sy-off.armed{background:var(--imp);color:#fff;border-color:var(--imp)}
+
+/* 빈 날 문구 아래 작은 안내 */
+.empty-msg{flex-direction:column;align-items:center}
+.empty-msg small{display:block;margin-top:4px;font-size:12px;opacity:.75}

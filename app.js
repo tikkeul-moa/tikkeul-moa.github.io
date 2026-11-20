@@ -197,7 +197,7 @@ function render(){
   bl.hidden=!bs2.length; bl.innerHTML='';
   bs2.forEach(b=>{const x=document.createElement('div');x.className='bday-item';x.textContent='🎂 '+b.name+' 생일';const sm=document.createElement('small');sm.textContent=' '+bdayDesc(b);x.appendChild(sm);bl.appendChild(x);});
   const ul=$('list'); ul.innerHTML='';
-  if(!t.total){const p=document.createElement('li');p.className='empty-msg';p.textContent='이 날은 할 일이 없어요. 위 칸에 적어서 추가해 보세요.';ul.appendChild(p);}
+  if(!t.total){const p=document.createElement('li');p.className='empty-msg';p.textContent=funEmpty(sel);const hint=document.createElement('small');hint.textContent='할 일은 위 칸에 적어서 추가해요.';p.appendChild(hint);ul.appendChild(p);}
   const rows=[];
   const twoStep=(key,doDel)=>()=>{ if(asking===key){asking=null;doDel();} else {asking=key;render();} };
   t.rs.forEach(r=>{
@@ -205,8 +205,8 @@ function render(){
     const imp=!!(t.d.rimp&&t.d.rimp[r.id]);
     const key='r:'+r.id;
     rows.push({key,el:item({id:'r-'+r.id,text:r.text,done,imp,tag:label(r.wd),
-      onCheck:v=>{const d=dayRec(sel);if(v)d.rdone[r.id]=true;else delete d.rdone[r.id];saveDay(sel);},
-      onStar:()=>{const d=dayRec(sel);if(d.rimp[r.id])delete d.rimp[r.id];else{d.rimp[r.id]=true;toTop(key);}saveDay(sel);},
+      onCheck:v=>{const d=dayRec(sel);if(v)d.rdone[r.id]=true;else delete d.rdone[r.id];saveDay(sel);if(v)funCheck();},
+      onStar:()=>{const d=dayRec(sel);if(d.rimp[r.id])delete d.rimp[r.id];else{d.rimp[r.id]=true;toTop(key);}saveDay(sel);if(d.rimp[r.id])funStar();},
       onMenu:()=>{asking=asking===key?null:key;render();},
       onDel:()=>{asking=null;withUndo('"'+r.text+'" 이 날에서 뺐어요.',()=>{const d=dayRec(sel);d.skip=[...(d.skip||[]),r.id];delete d.rdone[r.id];delete d.rimp[r.id];saveDay(sel);});},
       ask:asking===key?{routine:r}:null,
@@ -217,8 +217,8 @@ function render(){
   t.d.items.forEach(it=>{
     const key='i:'+it.id;
     rows.push({key,el:item({id:'i-'+it.id,text:it.text,done:!!it.done,imp:!!it.imp,
-      onCheck:v=>{it.done=v;saveDay(sel);},
-      onStar:()=>{it.imp=!it.imp;if(it.imp)toTop(key);saveDay(sel);},
+      onCheck:v=>{it.done=v;saveDay(sel);if(v)funCheck();},
+      onStar:()=>{it.imp=!it.imp;if(it.imp)toTop(key);saveDay(sel);if(it.imp)funStar();},
       onMenu:()=>{asking=asking===key?null:key;moving=false;render();},
       onDel:()=>{asking=null;withUndo('"'+it.text+'" 지웠어요.',()=>{const d=dayRec(sel);d.items=d.items.filter(x=>x!==it);saveDay(sel);});},
       ask:asking===key?{it}:null,
@@ -239,9 +239,11 @@ function carryOver(it,to){
   const src=dayRec(from); src.items=src.items.filter(x=>x!==it);
   const dst=dayRec(to);
   const dup=dst.items.some(x=>norm(x.text)===norm(it.text))||routinesFor(to).some(r=>norm(r.text)===norm(it.text));
+  const mv=(it.mv||0)+1; // 옮긴 횟수
+  const exSame=dst.items.find(x=>norm(x.text)===norm(it.text)); if(exSame) exSame.mv=Math.max(exSame.mv||0,mv);
   if(!dup){
     const nid=uid6();
-    dst.items.push({id:nid,text:it.text,done:false,imp:!!it.imp});
+    dst.items.push({id:nid,text:it.text,done:false,imp:!!it.imp,mv});
     // 꼭 할 일은 넘긴 날 목록 맨 위로
     if(it.imp){const nk='i:'+nid;dst.order=[nk,...(dst.order||[]).filter(k=>k!==nk)];}
   } else if(it.imp){
@@ -250,9 +252,37 @@ function carryOver(it,to){
     if(ex){ex.imp=true;const ek='i:'+ex.id;dst.order=[ek,...(dst.order||[]).filter(k=>k!==ek)];}
     else{const r=routinesFor(to).find(r=>norm(r.text)===norm(it.text));if(r){dst.rimp[r.id]=true;const rk='r:'+r.id;dst.order=[rk,...(dst.order||[]).filter(k=>k!==rk)];}}
   }
-  saveDay(from); if(!dup||it.imp) saveDay(to);
+  saveDay(from); saveDay(to);
   const d=parse(to), msg=(d.getMonth()+1)+'월 '+d.getDate()+'일';
-  return dup?msg+'에 같은 할 일이 이미 있어서 이 날 것만 지웠어요.':msg+'로 옮겼어요.';
+  return (dup?msg+'에 같은 할 일이 이미 있어서 이 날 것만 지웠어요.':msg+'로 옮겼어요.')+funMove(mv);
+}
+
+/* ===== 가끔 나오는 한마디 ===== */
+const FUN={
+  check:['티끌 하나 적립 완료 💰','오, 일 잘하시네요?','이 속도면 태산 금방이에요 ⛰️','체크하는 손맛, 이거죠 ✔️','한 걸음 더! 👣','또 해냈다… 혹시 천재?'],
+  empty:['할 일 0개. 숨만 쉬어도 성공인 날 😌','텅 빈 하루. 이런 날도 있어야죠','티끌도 쉬는 날이 있어요 🍃','아무것도 안 해도 되는 날… 부럽다','비어 있어요. 쉴지 채울지는 마음대로!']
+};
+let lastFun=-1;
+function funCheck(){ // 체크했을 때: 그날 다 끝내면 꼭, 아니면 3~4번에 한 번쯤
+  const t=tally(sel);
+  if(t.total&&t.done===t.total){ toast(sel===TODAY?'오늘 몫 끝! 이제 누워도 됩니다 🛌':'이 날 몫 끝! 깔끔해요 ✨'); return; }
+  if(Math.random()>0.3) return;
+  let i; do{ i=Math.floor(Math.random()*FUN.check.length); }while(i===lastFun&&FUN.check.length>1);
+  lastFun=i; toast(FUN.check[i]);
+}
+function funEmpty(k){ // 빈 날 문구: 날짜마다 정해진 하나 (볼 때마다 바뀌지 않게)
+  let h=0; for(const c of k) h=(h*31+c.charCodeAt(0))>>>0;
+  return FUN.empty[h%FUN.empty.length];
+}
+function funMove(n){ // 같은 할 일을 n번째 옮길 때
+  if(n<2) return '';
+  if(n===2) return ' 또 이사 가네요 📦';
+  if(n<5) return ' 벌써 '+n+'번째 이사… 이 정도면 전입신고 해야 해요';
+  return ' '+n+'번째 이사. 이 할 일은 이제 우리 가족이에요 🏠';
+}
+function funStar(){ // ★꼭을 5개 이상 붙이면
+  const d=dayRec(sel), n=d.items.filter(x=>x.imp).length+routinesFor(sel).filter(r=>d.rimp&&d.rimp[r.id]).length;
+  if(n>=5) toast('★가 '+n+'개… 다 꼭이면 꼭이 아닌데요? 🤔');
 }
 
 /* 별표한 줄을 맨 위로 */
