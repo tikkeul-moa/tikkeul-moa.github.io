@@ -56,23 +56,23 @@ function stampSVG(){
 const STAMP=stampSVG();
 /* 일주일(일~토) 7일을 모두 끝낸 주: 토요일에 찍는 큰 도장 */
 const GOLD='#e0a400', GOLD2='#b8860b';
-function weekSVG(){ // 왕관 금도장 "수고했어요"
+function weekSVG(){ // 왕관 금도장 "티끌 7개"
   let d='';const N=20,R=47,r=42;
   for(let i=0;i<=N*2;i++){const a=Math.PI*i/N, rr=i%2?r:R;d+=(i?'L':'M')+(50+rr*Math.cos(a)).toFixed(1)+' '+(50+rr*Math.sin(a)).toFixed(1);}
   return '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="'+d+'Z" fill="#fff6d1" stroke="'+GOLD+'" stroke-width="4" stroke-linejoin="round"/>'+
     '<circle cx="50" cy="50" r="34" fill="none" stroke="'+GOLD+'" stroke-width="2.5"/>'+
     '<path d="M31 50l3-21 9 10 7-14 7 14 9-10 3 21z" fill="'+GOLD+'"/><circle cx="34" cy="28" r="3" fill="'+GOLD+'"/><circle cx="50" cy="24" r="3" fill="'+GOLD+'"/><circle cx="66" cy="28" r="3" fill="'+GOLD+'"/>'+
-    '<text x="50" y="70" text-anchor="middle" font-size="15" font-weight="700" fill="'+GOLD2+'" font-family="Do Hyeon,sans-serif">수고했어요</text></svg>';
+    '<text x="50" y="70" text-anchor="middle" font-size="15" font-weight="700" fill="'+GOLD2+'" font-family="Do Hyeon,sans-serif">티끌 7개</text></svg>';
 }
 const WSTAMP=weekSVG();
 /* 한 달을 모두 끝낸 달: 마지막 날에 찍는 더 큰 도장 */
-function monthSVG(m){ // 트로피 금메달 "N월 완주" + 빨간 리본
+function monthSVG(m){ // 트로피 금메달 "태산 완성" + 빨간 리본
   const T=(y,sz,t,c)=>'<text x="50" y="'+y+'" text-anchor="middle" font-size="'+sz+'" font-weight="700" fill="'+(c||'#fff')+'" font-family="Do Hyeon,sans-serif">'+t+'</text>';
   return '<svg viewBox="0 0 100 100" aria-hidden="true">'+
       '<path d="M14 66l-10 14 12-1 5 11 9-16zM86 66l10 14-12-1-5 11-9-16z" fill="#e5484d"/>'+
       '<circle cx="50" cy="48" r="44" fill="'+GOLD+'" stroke="'+GOLD2+'" stroke-width="3"/><circle cx="50" cy="48" r="37" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2" stroke-dasharray="3 3"/>'+
       '<path d="M37 18h26v9a13 13 0 0 1-26 0z" fill="#fff"/><path d="M37 21h-7a7 7 0 0 0 8 11M63 21h7a7 7 0 0 1-8 11" fill="none" stroke="#fff" stroke-width="3"/><rect x="46" y="39" width="8" height="5" fill="#fff"/><rect x="40" y="44" width="20" height="4" rx="1.5" fill="#fff"/>'+
-      T(66,17,m+'월')+T(82,13,'완주')+'</svg>';
+      T(67,16,'태산 완성')+T(82,12,m+'월')+'</svg>';
 }
 /* 그 달을 모두 끝냈는지: 빈 날은 끝낸 것으로, 할 일 있는 날이 하루는 있어야 하고, 마지막 날이 오늘 이전 */
 function monthDone(last){
@@ -157,11 +157,11 @@ function render(){
     } else if(isLastDay(dt)&&monthDone(dt)){
       // 한 달 완주: 마지막 날에 가장 큰 도장 (일주일 도장보다 우선)
       b.classList.add('stamped');
-      const s=document.createElement('span');s.className='mstamp';s.innerHTML=monthSVG(dt.getMonth()+1);s.title='한 달 동안 수고했어요';b.appendChild(s);
+      const s=document.createElement('span');s.className='mstamp';s.innerHTML=monthSVG(dt.getMonth()+1);s.title='티끌 모아 태산! 한 달 내내 해냈어요';b.appendChild(s);
     } else if(dt.getDay()===6&&weekDone(dt)){
       // 일주일 완주: 토요일에 큰 금도장 (토요일에 할 일이 없어도)
       b.classList.add('stamped');
-      const s=document.createElement('span');s.className='wstamp';s.innerHTML=WSTAMP;s.title='일주일 동안 수고했어요';b.appendChild(s);
+      const s=document.createElement('span');s.className='wstamp';s.innerHTML=WSTAMP;s.title='티끌 7개 모았다! 이번 주도 해냈어요';b.appendChild(s);
     } else if(t.total&&t.done===t.total&&k<=TODAY){
       b.classList.add('stamped');
       const s=document.createElement('span');s.className='stamp';s.innerHTML=STAMP;b.appendChild(s);
@@ -185,8 +185,10 @@ function render(){
   const wkBig=!moBig&&sd.getDay()===6&&weekDone(sd);
   const allDone=moBig||wkBig||(t.total>0&&t.done===t.total&&sel<=TODAY), bs=$('bigStamp');
   bs.innerHTML=moBig?monthSVG(sd.getMonth()+1):wkBig?WSTAMP:STAMP; bs.classList.toggle('wk',wkBig); bs.classList.toggle('mo',moBig);
-  if(moBig) $('score').textContent+=' · 한 달 동안 정말 수고했어요!';
-  else if(wkBig) $('score').textContent+=' · 일주일 동안 수고했어요!';
+  // 일주일·한 달 완주 멘트는 진행 막대 아래 따로 (큰 도장에 가리지 않게)
+  const ch=$('cheer'); ch.hidden=!(moBig||wkBig);
+  ch.textContent=moBig?'🏆 티끌 모아 태산! 한 달 내내 해냈어요':wkBig?'👑 티끌 7개 모았다! 이번 주도 해냈어요':'';
+  ch.classList.toggle('mo',moBig);
   bs.hidden=!allDone;
   if(allDone&&lastSelDone===false){bs.classList.remove('pop');void bs.offsetWidth;bs.classList.add('pop');}
   lastSelDone=allDone;
